@@ -1,0 +1,81 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block body %}
+
+  <div class="flex mt-5 p-10 justify-center">
+    <h2 class="text-3xl font-normal mb-2 text-gray-500"> Social Board </h2>
+   </div>
+   <div class="text-sm font-normal p-5">
+    <!-- Add a form for filtering -->
+    <form method="get">
+        <!-- Filter by user -->
+        <select name="user_id">
+            <option value="" class="p=2">Select User</option>
+            {% for user in users %}
+            <option value="{{ user.id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Filter by date range
+        <input type="date" name="start_date">
+        <input type="date" name="end_date">  -->
+
+        <!-- Submit button -->
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-1 rounded">Filter</button>
+    </form>
+    </div>
+    
+    <div class="grid mx-60 p-10 grid-cols-1">
+        {% for post in posts %}
+        <!-- Existing post card -->
+        {% endfor %}
+    </div>
+
+   <div class="grid mx-60 p-10 grid-cols-1">
+    {% for post in posts %}
+    <!--Card starts here-->
+    <a href="#">
+    <div class="shadow border-stone-500">
+        <div class="rounded overflow-hidden w-[400px] h-[400px] bg-white shadow-lg">
+        
+        <div class="user-container flex mx-5 my-5">
+            {% if post.user.profile.photo %}
+            <img class="h-12 w-12 rounded-full" src="{{ post.user.profile.photo.url }}" alt="profile photo">
+            {% else %}
+            <img class="h-12 w-12 rounded-full" src="{% static 'users/images/aprofile1.png' %}" alt="placeholder profile photo">
+            {% endif %}
+        
+            <div class="mx-2 my-2 font-bold"><span class="text-indigo-500">{{ post.user }}</span></div>
+        </div>
+            <div class="flex justify-center" >
+                {% if post.image %}
+                        <img class="rounded object-fill" src="{{ post.image.url }}" alt="post photo">
+                {% else %}
+                <!-- Optionally, I don't want a placeholder image so nothing -->
+                        <img class="rounded object-fill" src="{% static '' %}" alt="">
+                {% endif %}
+            </div>
+        </div>
+            <div class="px-6 py-4">
+                <div class="icon-container flex gap-3">
+                    <p class="text-gray-700 text-base">Posted on {{ post.created|date:"Y-m-d H:i:s" }}</p>
+                    <img class="w-5 h-5" src="{% static 'users/images/like.png' %}" alt="like">
+                    <img class="w-5 h-5" src="{% static 'users/images/heart.png' %}" alt="heart">
+                    <img class="w-5 h-5" src="{% static 'users/images/comment.png' %}" alt="comment">
+                    <img class="w-5 h-5" src="{% static 'users/images/share.png' %}" alt="share">
+                </div>      
+            </div>
+        <div class="px-6 py-4">
+            <div class="font-bold  text-xl mb-2">{{post.title}}</div>
+            <p class="text-gray-700 text-base">{{post.caption}}</p>
+        </div>
+    </div>   
+    </a>
+    <!--Card ends here-->
+    {% endfor %}
+   </div>
+
+{% endblock %}
+
+ 
