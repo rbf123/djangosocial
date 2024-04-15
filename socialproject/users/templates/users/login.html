@@ -1,5 +1,15 @@
 {% extends 'users/base.html' %}
 {% block body%}
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <h1 class="text-2xl m-10">👩 Login User </h1>
 
 <div class="container py-5">

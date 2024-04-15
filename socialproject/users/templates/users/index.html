@@ -19,15 +19,20 @@
             <div class="mx-2 my-2 font-bold"><span class="text-indigo-500">{{ post.user }}</span></div>
         </div>
             <div class="flex justify-center">
-            <img class="rounded object-fill" src="{{ post.image.url }}" alt="post photo">
+                {% if post.image %}
+                <img class="rounded object-fill" src="{{ post.image.url }}" alt="post photo">
+                {% else %}
+                <!-- Optionally, display a placeholder image or nothing -->
+                <img class="rounded object-fill" src="{% static '' %}" alt="">
+            {% endif %}
+            
             </div>
         </div>
             <div class="px-6 py-4">
                 <div class="icon-container flex gap-3">
-                    <img class="w-5 h-5" src="{% static 'users/images/like.png' %}" alt="like">
-                    <img class="w-5 h-5" src="{% static 'users/images/heart.png' %}" alt="heart">
+                    <!-- I don't want to show the icons <img class="w-5 h-5" src="{% static 'users/images/whitelike.png' %}" alt="like">
                     <img class="w-5 h-5" src="{% static 'users/images/comment.png' %}" alt="comment">
-                    <img class="w-5 h-5" src="{% static 'users/images/share.png' %}" alt="share">
+                    <img class="w-5 h-5" src="{% static 'users/images/share.png' %}" alt="share"> --> 
                 </div>      
             </div>
         <div class="px-6 py-4">

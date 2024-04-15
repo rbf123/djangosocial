@@ -1,4 +1,6 @@
 {% extends 'users/base.html' %}
+{% load mathfilters %}
+
 {% load static %}
 
 {% block body %}
@@ -60,12 +62,21 @@
             <div class="px-6 py-4">
                 <div class="icon-container flex gap-3">
                     <p class="text-gray-700 text-base">Posted on {{ post.created|date:"Y-m-d H:i:s" }}</p>
-                    <img class="w-5 h-5" src="{% static 'users/images/like.png' %}" alt="like">
-                    <img class="w-5 h-5" src="{% static 'users/images/heart.png' %}" alt="heart">
+                    <a id="{{ post.id }}" class="btn-like"> 
+                        {% if logged_user in post.liked_by.all %}
+                        <img class="w-5 h-5" src="{% static 'users/images/redlike.png' %}" alt="like">
+                        {% else %}
+                        <img class="w-5 h-5" src="{% static 'users/images/whitelike.png' %}" alt="like">
+                        {% endif %}
+                    </a>
+                    
+                    
                     <img class="w-5 h-5" src="{% static 'users/images/comment.png' %}" alt="comment">
                     <img class="w-5 h-5" src="{% static 'users/images/share.png' %}" alt="share">
-                </div>      
+                    <span class="like-count">{{ post.liked_by.count }} {{ post.liked_by.count|pluralize:"like,likes" }}</span>
+                </div>     
             </div>
+       
         <div class="px-6 py-4">
             <div class="font-bold  text-xl mb-2">{{post.title}}</div>
             <p class="text-gray-700 text-base">{{post.caption}}</p>
@@ -75,7 +86,27 @@
     <!--Card ends here-->
     {% endfor %}
    </div>
-
+   <script type="text/javascript">
+    //console.log('This is working')
+    window.CSRF_TOKEN = "{{ csrf_token }}"
+    $(document).on('click', '.btn-like', function(e) {
+        e.preventDefault();  // Prevent the default anchor behavior
+        var post_id = $(this).attr('id');
+        var btn = $(this);  // Reference to the button clicked
+        $.ajax({
+            method: "POST",
+            url: '/posts/like',
+            data: { post_id: post_id, csrfmiddlewaretoken: window.CSRF_TOKEN },
+            success: function(response) {
+                var imgSrc = response.liked ? '{% static "users/images/redlike.png" %}' : '{% static "users/images/whitelike.png" %}';
+                btn.find('img').attr('src', imgSrc);
+                // Update the like count text
+                btn.siblings('.like-count').text(response.like_count + (response.like_count == 1 ? ' like' : ' likes'));
+            }
+        });
+    });
+    
+   </script>
 {% endblock %}
 
  

@@ -1,27 +1,31 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import PostCreateForm
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 from .models import Post
 from django.db.models import Q
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-
+from django.http import JsonResponse
+from django.contrib import messages
 # Create your views here.
 
 
 
 @login_required
 def post_create(request):
-    if request.method=='POST':
+    if request.method == 'POST':
         form = PostCreateForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             new_item = form.save(commit=False)
             new_item.user = request.user
             new_item.save()
+            messages.success(request, "Your post has been created successfully!")
+            return redirect('create')  # Redirect to the same view to clear the form
     else:
-        form = PostCreateForm(data=request.GET)
-    return render(request,'posts/create.html',{'form': form})
+        form = PostCreateForm()  # Present an empty form
+    return render(request, 'posts/create.html', {'form': form})
 
 #def feed(request):
 #    posts = Post.objects.all()
@@ -29,6 +33,7 @@ def post_create(request):
 
 @login_required
 def feed(request):
+    logged_user = request.user
     # Filter by user
     user_id = request.GET.get('user_id')
     # Filter by date range
@@ -53,5 +58,27 @@ def feed(request):
     # Get list of users who have made posts
     users = User.objects.filter(post__isnull=False).distinct()
 
-    return render(request, 'posts/feed.html', {'posts': posts, 'users':users})
+    return render(request, 'posts/feed.html', {'posts': posts, 'users':users, 'logged_user':logged_user})
 
+def like_post(request):
+    post_id = request.POST.get('post_id')
+    post = get_object_or_404(Post, id=post_id)
+    if post.liked_by.filter(id=request.user.id).exists():
+        post.liked_by.remove(request.user)
+    else:
+        post.liked_by.add(request.user)
+    return redirect('feed')
+
+def like_post(request):
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        post = get_object_or_404(Post, id=post_id)
+        liked = False
+        if post.liked_by.filter(id=request.user.id).exists():
+            post.liked_by.remove(request.user)
+        else:
+            post.liked_by.add(request.user)
+            liked = True
+        like_count = post.liked_by.count()
+        return JsonResponse({'liked': liked, 'like_count': like_count})
+    return JsonResponse({'error': 'Invalid request'}, status=400)

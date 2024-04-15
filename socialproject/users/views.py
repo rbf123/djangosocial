@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile
 from .forms import UserEditForm, ProfileEditForm
 from posts.models import Post
+from django.contrib import messages
+from django.shortcuts import redirect
 
 def logout_view(request):
     logout(request)
@@ -16,13 +18,14 @@ def user_login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            user = authenticate(
-                request, username=data['username'], password=data['password'])
+            user = authenticate(request, username=data['username'], password=data['password'])
             if user is not None:
                 login(request, user)
-                return HttpResponse("user authenticated and logged in")
+                messages.success(request, "User authenticated and logged in")
+                return redirect('feed')  # Redirect to a new page
             else:
-                return HttpResponse("Invalid credentials")
+                messages.error(request, "Invalid credentials")
+                return redirect('login')  # Redirect back to the login page
     else:
         form = LoginForm()
     return render(request, 'users/login.html', {'form': form})
