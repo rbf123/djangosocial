@@ -30,7 +30,7 @@ Video Demonstration:
 
 https://github.com/rbf123/djangosocial/assets/108244092/bbfbc27b-62a7-4e3b-8411-564edb884e05
 
-![YouTube Link for the video](https://www.youtube.com/watch?v=e29yKlmXQ8s)
+(Alternatively: [YouTube Link for the video](https://www.youtube.com/watch?v=e29yKlmXQ8s) - opens a new page on YouTube)
 
 Photos / Screenshots:
 
