@@ -5,8 +5,18 @@
 
 {% block body %}
 
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
   <div class="flex mt-5 p-10 justify-center">
-    <h2 class="text-3xl font-normal mb-2 text-gray-500"> Social Board </h2>
+    <h2 class="text-3xl font-normal mb-2 text-gray-500"> Gratitude Board </h2>
    </div>
    <div class="text-sm font-normal p-5">
     <!-- Add a form for filtering -->
@@ -28,6 +38,8 @@
     </form>
     </div>
     
+
+
     <div class="grid mx-60 p-10 grid-cols-1">
         {% for post in posts %}
         <!-- Existing post card -->
@@ -80,6 +92,31 @@
         <div class="px-6 py-4">
             <div class="font-bold  text-xl mb-2">{{post.title}}</div>
             <p class="text-gray-700 text-base">{{post.caption}}</p>
+        </div>
+        <div class="px-5 py-5"> 
+            <p> Comments: </p>
+            {% for comment in post.comments.all %}
+            <b>{{ comment.posted_by }} </b>{{ comment.body }}
+            <br>
+            {% endfor %}
+        </div>
+        <div class="px-5 py-5">
+            <form method="post" class="bg-white 0 rounded">
+                {% csrf_token %}
+                <div class="flex">
+                    <div class="border rounded mr-10 text-grey-700">
+                        {{ comment_form.body }}
+                    </div>
+                    
+                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
+                        <input type="hidden" name="posted_by" id="posted_by" value="{{ logged_user }}">
+                 
+                    
+                        <button type="submit" class="bg-green-500 text-white px-5 py-2">Add</button>
+                </div>
+                
+                
+            </form>
         </div>
     </div>   
     </a>
